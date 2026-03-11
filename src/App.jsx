@@ -8,18 +8,21 @@ const PROJECTS = [
     title: "MoneyList - DigiUp 2024",
     description: "Personalized money management application designed to help users track expenses and manage finances effectively.",
     tags: ["Figma", "UI/UX Design", "Mobile App"],
+    image: "/assets/projects/moneylist.jpg"
   },
   {
     id: 2,
     title: "Solivio - Techcomfort 2025",
     description: "Mental wellness app combining doctor chat, habit tracking, mood journaling, and gamification for emotional balance.",
     tags: ["UI/UX", "Figma", "Competition"],
+    image: "/assets/projects/solivio.jpg"
   },
   {
     id: 3,
-    title: "Perpusja - School Fullstack Project",
-    description: "Digital library platform. Led UI/UX design and implemented responsive interface using Tailwind CSS.",
-    tags: ["Tailwind CSS", "UI/UX Lead", "Full Stack"],
+    title: "MoneyList v2 - Kids Hackathon 2025",
+    description: "Fullstack web application for small businesses with inventory tracking. Built with ReactJS and Firebase, featuring secure authentication and real-time inventory management.",
+    tags: ["ReactJS", "Firebase", "Full Stack", "Inventory Management"],
+    image: "/assets/projects/moneylistv2.jpg"
   },
 ];
 
@@ -36,8 +39,6 @@ const CERTIFICATIONS = [
     title: "TOEIC Listening and Reading",
     issuer: "Official Score Certificate",
     score: "Score 940",
-    // FIX: Place your images in the /public/assets/certifications/ folder
-    // and they will load correctly with these paths
     image: "/assets/certifications/toeic.jpg",
     icon: "📊"
   },
@@ -64,9 +65,9 @@ const CERTIFICATIONS = [
   }
 ];
 
-// FIX: Placeholder fallback using placehold.co (via.placeholder.com is shut down)
 const PLACEHOLDER_PROFILE = "https://placehold.co/200x200?text=Elian";
 const PLACEHOLDER_CERT = "https://placehold.co/300x150?text=Certificate";
+const PLACEHOLDER_PROJECT = "https://placehold.co/600x400?text=Project+Screenshot";
 
 const useScrollPosition = () => {
   const [activeSection, setActiveSection] = useState("About");
@@ -124,26 +125,28 @@ const ImageModal = ({ isOpen, onClose, imageSrc, title }) => {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div className="relative max-w-4xl w-full max-h-[90vh]">
+      <div className="relative max-w-6xl w-full max-h-[90vh]">
         <button 
           onClick={onClose}
-          className="absolute -top-10 right-0 text-white hover:text-orange-400 text-2xl"
+          className="absolute -top-12 right-0 text-white hover:text-orange-400 text-3xl z-10"
         >
           ×
         </button>
+        
         <img 
           src={imageSrc} 
           alt={title}
           className="w-full h-full object-contain"
-          // FIX: use placehold.co instead of via.placeholder.com
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = PLACEHOLDER_CERT;
+            e.target.src = PLACEHOLDER_PROJECT;
           }}
         />
+        
+        <p className="text-white text-center mt-4">{title}</p>
       </div>
     </div>
   );
@@ -186,7 +189,6 @@ export default function Portfolio() {
             Elian<span className="text-orange-400">.</span>
           </button>
           
-          {/* Desktop menu */}
           <div className="hidden md:flex gap-8">
             {NAV_LINKS.map(link => (
               <button
@@ -203,7 +205,6 @@ export default function Portfolio() {
             ))}
           </div>
           
-          {/* Mobile menu button */}
           <button 
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-2xl text-gray-700 hover:text-orange-500 transition-colors"
@@ -212,7 +213,6 @@ export default function Portfolio() {
           </button>
         </div>
         
-        {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4">
             {NAV_LINKS.map(link => (
@@ -241,14 +241,11 @@ export default function Portfolio() {
         <div className="max-w-5xl mx-auto">
           <FadeInSection>
             <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-              {/* Profile Image */}
               <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-orange-200 shadow-lg flex-shrink-0">
                 <img 
-                  // FIX: Place elian.jpg in /public/assets/profile/ for this path to work
                   src="/assets/profile/elian.jpg"
                   alt="Elian Malik Achmad Uluelang"
                   className="w-full h-full object-cover"
-                  // FIX: use placehold.co instead of via.placeholder.com
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = PLACEHOLDER_PROFILE;
@@ -256,7 +253,6 @@ export default function Portfolio() {
                 />
               </div>
               
-              {/* Text Content */}
               <div className="flex-1 text-center md:text-left">
                 <span className="inline-block px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-medium mb-6">
                   👋 Available for work
@@ -298,18 +294,44 @@ export default function Portfolio() {
             </h2>
           </FadeInSection>
           
-          <div className="grid gap-6">
+          <div className="grid gap-8">
             {PROJECTS.map((project, i) => (
               <FadeInSection key={project.id} delay={i * 0.1}>
-                <div className="bg-white p-8 rounded-2xl hover:shadow-lg transition-shadow border border-gray-100">
-                  <h3 className="text-2xl font-medium mb-3">{project.title}</h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed">{project.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map(tag => (
-                      <span key={tag} className="px-3 py-1 bg-orange-50 text-orange-700 rounded-full text-sm">
-                        {tag}
+                <div className="bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow border border-gray-100">
+                  {/* Project Image */}
+                  <div 
+                    className="relative h-64 cursor-pointer group"
+                    onClick={() => openModal(project.image, project.title)}
+                  >
+                    <img 
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = PLACEHOLDER_PROJECT;
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                      <span className="text-white bg-black/70 px-4 py-2 rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to enlarge
                       </span>
-                    ))}
+                    </div>
+                  </div>
+                  
+                  {/* Project Info */}
+                  <div className="p-8">
+                    <h3 className="text-2xl font-medium mb-3">{project.title}</h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed">{project.description}</p>
+                    
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {project.tags.map(tag => (
+                        <span key={tag} className="px-3 py-1 bg-orange-50 text-orange-700 rounded-full text-sm">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </FadeInSection>
@@ -416,7 +438,6 @@ export default function Portfolio() {
                           src={cert.image}
                           alt={`${cert.title} certificate`}
                           className="w-full h-full object-cover opacity-75 group-hover:opacity-100 transition-opacity"
-                          // FIX: use placehold.co instead of via.placeholder.com
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = PLACEHOLDER_CERT;
