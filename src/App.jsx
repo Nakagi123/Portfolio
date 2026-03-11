@@ -36,27 +36,37 @@ const CERTIFICATIONS = [
     title: "TOEIC Listening and Reading",
     issuer: "Official Score Certificate",
     score: "Score 940",
+    // FIX: Place your images in the /public/assets/certifications/ folder
+    // and they will load correctly with these paths
+    image: "/assets/certifications/toeic.jpg",
     icon: "📊"
   },
   {
     id: 2,
     title: "Designer Multimedia Muda",
     issuer: "Badan Nasional Sertifikasi Profesi",
+    image: "/assets/certifications/multimedia.jpg",
     icon: "🎨"
   },
   {
     id: 3,
     title: "UI/UX Designer",
     issuer: "PT Telkom Prima Cipta",
+    image: "/assets/certifications/uiux.jpg",
     icon: "✨"
   },
   {
     id: 4,
     title: "Samsung Innovation Campus Batch 6",
     issuer: "Hacktiv8",
+    image: "/assets/certifications/samsung.jpg",
     icon: "📱"
   }
 ];
+
+// FIX: Placeholder fallback using placehold.co (via.placeholder.com is shut down)
+const PLACEHOLDER_PROFILE = "https://placehold.co/200x200?text=Elian";
+const PLACEHOLDER_CERT = "https://placehold.co/300x150?text=Certificate";
 
 const useScrollPosition = () => {
   const [activeSection, setActiveSection] = useState("About");
@@ -108,11 +118,44 @@ const FadeInSection = ({ children, delay = 0 }) => {
   );
 };
 
+// Image Modal Component
+const ImageModal = ({ isOpen, onClose, imageSrc, title }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div className="relative max-w-4xl w-full max-h-[90vh]">
+        <button 
+          onClick={onClose}
+          className="absolute -top-10 right-0 text-white hover:text-orange-400 text-2xl"
+        >
+          ×
+        </button>
+        <img 
+          src={imageSrc} 
+          alt={title}
+          className="w-full h-full object-contain"
+          // FIX: use placehold.co instead of via.placeholder.com
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = PLACEHOLDER_CERT;
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
 export default function Portfolio() {
   const activeSection = useScrollPosition();
   const [menuOpen, setMenuOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [formStatus, setFormStatus] = useState("idle");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const scrollTo = (id) => {
     document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: "smooth" });
@@ -124,6 +167,11 @@ export default function Portfolio() {
     setFormStatus("success");
     setFormData({ name: "", email: "", message: "" });
     setTimeout(() => setFormStatus("idle"), 3000);
+  };
+
+  const openModal = (imageSrc, title) => {
+    setSelectedImage({ src: imageSrc, title });
+    setModalOpen(true);
   };
 
   return (
@@ -180,35 +228,61 @@ export default function Portfolio() {
         )}
       </nav>
 
+      {/* Image Modal */}
+      <ImageModal 
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        imageSrc={selectedImage?.src}
+        title={selectedImage?.title}
+      />
+
       {/* Hero Section */}
       <section id="about" className="pt-32 pb-20 px-6">
         <div className="max-w-5xl mx-auto">
           <FadeInSection>
-            <div className="max-w-2xl">
-              <span className="inline-block px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-medium mb-6">
-                👋 Available for work
-              </span>
-              <h1 className="text-5xl md:text-6xl font-light leading-tight mb-4">
-                Elian Malik<br />
-                <span className="font-medium">Achmad Uluelang</span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                UI/UX Designer & Full Stack Developer from Semarang, Indonesia. 
-                I create simple, functional digital experiences.
-              </p>
-              <div className="flex gap-4">
-                <button 
-                  onClick={() => scrollTo("projects")} 
-                  className="px-8 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors font-medium"
-                >
-                  View work →
-                </button>
-                <button 
-                  onClick={() => scrollTo("contact")} 
-                  className="px-8 py-3 border border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 transition-colors font-medium"
-                >
-                  Get in touch
-                </button>
+            <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+              {/* Profile Image */}
+              <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-orange-200 shadow-lg flex-shrink-0">
+                <img 
+                  // FIX: Place elian.jpg in /public/assets/profile/ for this path to work
+                  src="/assets/profile/elian.jpg"
+                  alt="Elian Malik Achmad Uluelang"
+                  className="w-full h-full object-cover"
+                  // FIX: use placehold.co instead of via.placeholder.com
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = PLACEHOLDER_PROFILE;
+                  }}
+                />
+              </div>
+              
+              {/* Text Content */}
+              <div className="flex-1 text-center md:text-left">
+                <span className="inline-block px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-medium mb-6">
+                  👋 Available for work
+                </span>
+                <h1 className="text-5xl md:text-6xl font-light leading-tight mb-4">
+                  Elian Malik<br />
+                  <span className="font-medium text-orange-500">Achmad Uluelang</span>
+                </h1>
+                <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                  UI/UX Designer & Full Stack Developer from Semarang, Indonesia. 
+                  I create simple, functional digital experiences.
+                </p>
+                <div className="flex gap-4 justify-center md:justify-start">
+                  <button 
+                    onClick={() => scrollTo("projects")} 
+                    className="px-8 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors font-medium"
+                  >
+                    View work →
+                  </button>
+                  <button 
+                    onClick={() => scrollTo("contact")} 
+                    className="px-8 py-3 border border-gray-300 rounded-full hover:border-orange-500 hover:text-orange-500 transition-colors font-medium"
+                  >
+                    Get in touch
+                  </button>
+                </div>
               </div>
             </div>
           </FadeInSection>
@@ -319,17 +393,41 @@ export default function Portfolio() {
           <div className="grid md:grid-cols-2 gap-6">
             {CERTIFICATIONS.map((cert, i) => (
               <FadeInSection key={cert.id} delay={i * 0.1}>
-                <div className="bg-white p-6 rounded-xl hover:shadow-md transition-shadow border border-orange-100">
+                <div 
+                  className="bg-white p-6 rounded-xl hover:shadow-md transition-shadow border border-orange-100 cursor-pointer group"
+                  onClick={() => openModal(cert.image, cert.title)}
+                >
                   <div className="flex items-start gap-4">
                     <span className="text-3xl">{cert.icon}</span>
-                    <div>
-                      <h3 className="font-medium text-lg mb-1">{cert.title}</h3>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-lg mb-1 group-hover:text-orange-500 transition-colors">
+                        {cert.title}
+                      </h3>
                       <p className="text-gray-600 text-sm mb-2">{cert.issuer}</p>
                       {cert.score && (
                         <span className="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium">
                           {cert.score}
                         </span>
                       )}
+                      
+                      {/* Certificate Thumbnail */}
+                      <div className="mt-4 relative h-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                        <img 
+                          src={cert.image}
+                          alt={`${cert.title} certificate`}
+                          className="w-full h-full object-cover opacity-75 group-hover:opacity-100 transition-opacity"
+                          // FIX: use placehold.co instead of via.placeholder.com
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = PLACEHOLDER_CERT;
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                          <span className="text-white bg-black/50 px-3 py-1 rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            Click to enlarge
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -405,9 +503,9 @@ export default function Portfolio() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-sm">
           <span>© 2025 Elian Malik Achmad Uluelang</span>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-orange-500 transition-colors">GitHub</a>
-            <a href="#" className="hover:text-orange-500 transition-colors">LinkedIn</a>
-            <a href="#" className="hover:text-orange-500 transition-colors">Email</a>
+            <a href="https://github.com/Nakagi123" className="hover:text-orange-500 transition-colors">GitHub</a>
+            <a href="https://www.linkedin.com/in/elian-malik-achmad-uluelang/" className="hover:text-orange-500 transition-colors">LinkedIn</a>
+            <a href="mailto:elianstemba2610@gmail.com" className="hover:text-orange-500 transition-colors">Email</a>
           </div>
         </div>
       </footer>
